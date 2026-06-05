@@ -16,7 +16,7 @@ class Campana(models.Model):
     fecha_inicio = models.DateField()
     fecha_termino = models.DateField()
     estado = models.CharField(max_length=50)
-    tipo_vacuna = models.ForeignKey(TipoVacuna, on_delete=models.CASCADE, related_name="campanas", null=True, blank=True)
+    tipos_vacuna = models.ManyToManyField(TipoVacuna, related_name="campanas", blank=True)
 
     def __str__(self):
         return self.nombre
@@ -76,6 +76,7 @@ class Cita(models.Model):
     persona = models.ForeignKey('Persona', on_delete=models.CASCADE, related_name="citas")
     punto_vacunacion = models.ForeignKey('PuntoVacunacion', on_delete=models.CASCADE)
     campana = models.ForeignKey('Campana', on_delete=models.CASCADE)
+    tipo_vacuna = models.ForeignKey(TipoVacuna, on_delete=models.CASCADE, null=True, blank=True)
 
     # Diccionario para mapear el string de la BD a la clase del Patrón State
     _MAPA_ESTADOS = {

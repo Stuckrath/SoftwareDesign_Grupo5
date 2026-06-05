@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .models import Campana, PuntoVacunacion, Cita, Persona
+from .models import Campana, PuntoVacunacion, Cita, Persona, TipoVacuna
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
@@ -82,12 +82,15 @@ def agendar_cita(request):
     # BPMN: "Busca horarios, vacunas y lugares disponibles" -> "Rescata datos relacionados"
     campanas_disponibles = Campana.objects.all() 
     puntos_disponibles = PuntoVacunacion.objects.all()
+    vacunas_disponibles = TipoVacuna.objects.all()
 
     if request.method == 'GET':
         # BPMN: "Entrega al usuario las selecciones disponibles"
         contexto = {
             'campanas': campanas_disponibles,
-            'puntos': puntos_disponibles
+            'puntos': puntos_disponibles,
+            'vacunas': vacunas_disponibles
+
         }
         return render(request, 'mi_app/agendar.html', contexto)
 
@@ -96,6 +99,7 @@ def agendar_cita(request):
     # BPMN: "Manda confirmación de opciones al sistema"
     if request.method == 'POST':
         campana_id = request.POST.get('campana')
+        vacuna_id = request.POST.get('vacuna')
         punto_id = request.POST.get('punto')
         fecha_hora = request.POST.get('fecha_hora')
 
@@ -108,7 +112,8 @@ def agendar_cita(request):
             estado='Agendada', # Estado inicial del flujo
             persona=persona_paciente,
             punto_vacunacion_id=int(punto_id),
-            campana_id=int(campana_id)
+            campana_id=int(campana_id),
+            tipo_vacuna_id=int(vacuna_id)
         )
 
         # BPMN: "Envia confirmación al sistema" -> "Manda confirmación al usuario"

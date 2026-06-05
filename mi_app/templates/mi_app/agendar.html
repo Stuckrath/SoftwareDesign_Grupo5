@@ -8,21 +8,34 @@
     <h2>Solicitud de Agenda de Vacuna</h2>
     <p>RUT del Paciente: {{ user.username }}</p>
 
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: red; font-weight: bold;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
     <form method="POST">
         {% csrf_token %}
 
-        <label for="campana">1. Seleccione la Campaña (y su Vacuna asociada):</label><br>
+        <label for="campana">1. Seleccione la Campaña / Operativo:</label><br>
         <select name="campana" id="campana" required>
             <option value="">-- Seleccione una opción --</option>
             {% for campana in campanas %}
-                <option value="{{ campana.id_campana }}">
-                    {{ campana.nombre }} — [Vacuna: {{ campana.tipo_vacuna.nombre }}]
-                </option>
+                <option value="{{ campana.id_campana }}">{{ campana.nombre }}</option>
             {% endfor %}
         </select>
         <br><br>
 
-        <label for="punto">2. Seleccione el Centro de Vacunación:</label><br>
+        <label for="vacuna">2. Seleccione el Tipo de Vacuna deseada:</label><br>
+        <select name="vacuna" id="vacuna" required>
+            <option value="">-- Seleccione el compuesto biológico --</option>
+            {% for vacuna in vacunas %}
+                <option value="{{ vacuna.id_vacuna }}">{{ vacuna.nombre }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label for="punto">3. Seleccione el Centro de Vacunación:</label><br>
         <select name="punto" id="punto" required>
             <option value="">-- Seleccione un lugar --</option>
             {% for punto in puntos %}
@@ -31,7 +44,7 @@
         </select>
         <br><br>
 
-        <label for="fecha_hora">3. Seleccione Fecha y Hora deseada:</label><br>
+        <label for="fecha_hora">4. Seleccione Fecha y Hora deseada:</label><br>
         <input type="datetime-local" name="fecha_hora" id="fecha_hora" required>
         <br><br>
 
