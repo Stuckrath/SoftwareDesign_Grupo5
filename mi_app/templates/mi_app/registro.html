@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Usuario</title>
+</head>
+<body>
+    <h2>Formulario de Registro de Paciente</h2>
+    {% if messages %}
+        {% for message in messages %}<p style="color: red;">{{ message }}</p>{% endfor %}
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        <label>RUT (Sin puntos ni guión):</label><br><input type="text" name="rut" required><br><br>
+        <label>Nombres:</label><br><input type="text" name="nombres" required><br><br>
+        <label>Apellidos:</label><br><input type="text" name="apellidos" required><br><br>
+        <label>Fecha de Nacimiento:</label><br><input type="date" name="fecha_nacimiento" required><br><br>
+        <label>Correo Electrónico:</label><br><input type="email" name="correo" required><br><br>
+        <label>Teléfono:</label><br><input type="text" name="telefono" required><br><br>
+        <label>Contraseña de ingreso:</label><br><input type="password" name="password" required><br><br>
+        <button type="submit">Registrar Cuenta</button>
+    </form>
+</body>
+</html>

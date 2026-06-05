@@ -1,4 +1,13 @@
 from django.db import models
+from .states import EstadoAgendada,EstadoCancelada,EstadoVacuna
+
+class TipoVacuna(models.Model):
+    id_vacuna = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    desc_tipo = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.nombre
 
 class Campana(models.Model):
     id_campana = models.AutoField(primary_key=True)
@@ -7,15 +16,7 @@ class Campana(models.Model):
     fecha_inicio = models.DateField()
     fecha_termino = models.DateField()
     estado = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.nombre
-
-
-class TipoVacuna(models.Model):
-    id_vacuna = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    desc_tipo = models.TextField(blank=True, null=True)
+    tipo_vacuna = models.ForeignKey(TipoVacuna, on_delete=models.CASCADE, related_name="campanas", null=True, blank=True)
 
     def __str__(self):
         return self.nombre
@@ -71,14 +72,45 @@ class Persona(models.Model):
 class Cita(models.Model):
     id_cita = models.AutoField(primary_key=True)
     fecha_hora = models.DateTimeField()
-    estado = models.CharField(max_length=50)  
-    persona = models.ForeignKey(Persona, on_delete=models.CASCADE, related_name="citas")
-    punto_vacunacion = models.ForeignKey(PuntoVacunacion, on_delete=models.CASCADE)
-    campana = models.ForeignKey(Campana, on_delete=models.CASCADE)
+    estado = models.CharField(max_length=50, default='Agendada') # Guarda el string en la BD
+    persona = models.ForeignKey('Persona', on_delete=models.CASCADE, related_name="citas")
+    punto_vacunacion = models.ForeignKey('PuntoVacunacion', on_delete=models.CASCADE)
+    campana = models.ForeignKey('Campana', on_delete=models.CASCADE)
+
+    # Diccionario para mapear el string de la BD a la clase del Patrón State
+    _MAPA_ESTADOS = {
+        'Agendada': EstadoAgendada,
+        'Cancelada': EstadoCancelada,
+        'Vacunado': EstadoVacuna, # O 'EstadoVacuna' según tu diagrama
+    }
+
+    @property
+    def estado_actual(self):
+        """Devuelve la instancia de la clase State correspondiente"""
+        clase_state = self._MAPA_ESTADOS.get(self.estado, EstadoAgendada)
+        return clase_state()
+
+    def guardar_estado_str(self, nuevo_estado_str):
+        """Método auxiliar para que los States actualicen el string en la BD"""
+        self.estado = nuevo_estado_str
+        self.save()
+
+    # --- Métodos del diagrama delegados al Patrón State ---
+    
+    def agendar(self):
+        self.estado_actual.agendar(self)
+
+    def reprogramar(self, nueva_fecha):
+        self.estado_actual.reprogramar(self, nueva_fecha)
+
+    def cancelar(self):
+        self.estado_actual.cancelar(self)
+
+    def registrarVacuna(self):
+        self.estado_actual.registrar_vacuna(self)
 
     def __str__(self):
-        return f"Cita {self.id_cita} - {self.persona.rut}"
-
+        return f"Cita {self.id_cita} - {self.persona.rut} ({self.estado})"
 
 class Vacunacion(models.Model):
     id_vacunacion = models.AutoField(primary_key=True)

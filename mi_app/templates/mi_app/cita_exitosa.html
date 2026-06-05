@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cita Confirmada</title>
+</head>
+<body>
+    <h2 style="color: green;">¡Cita Agendada Exitosamente!</h2>
+    <p>Tu reserva ha sido almacenada en el sistema de gestión de vacunas.</p>
+    
+    <ul>
+        <li><strong>Paciente (RUT):</strong> {{ cita.persona.rut }}</li>
+        <li><strong>Campaña:</strong> {{ cita.campana.nombre }}</li>
+        <li><strong>Tipo de Vacuna a recibir:</strong> {{ cita.campana.tipo_vacuna.nombre }}</li>
+        <li><strong>Lugar:</strong> {{ cita.punto_vacunacion.nombre }}</li>
+        <li><strong>Fecha y Hora:</strong> {{ cita.fecha_hora }}</li>
+        <li><strong>Estado actual:</strong> {{ cita.estado }}</li>
+    </ul>
+
+    <hr>
+    <a href="{% url 'inicio' %}"><button>Ir al Inicio</button></a>
+</body>
+</html>

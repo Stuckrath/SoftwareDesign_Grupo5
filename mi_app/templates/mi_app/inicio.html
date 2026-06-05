@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agenda de Vacunas - Inicio</title>
+</head>
+<body>
+    <h1>Bienvenido a la Plataforma de Agenda de Vacunas</h1>
+    
+    {% if user.is_authenticated %}
+        <p>Hola, estás autenticado con el RUT: {{ user.username }}</p>
+
+        <a href="{% url 'agendar' %}">
+            <button style="background-color: #4CAF50; color: white; padding: 10px;">Agendar mi Cita de Vacunación</button>
+        </a>
+        <br><br>
+        
+        <a href="{% url 'logout' %}">
+            <button style="background-color: #ff4d4d; color: white;">Cerrar Sesión</button>
+        </a>
+    {% else %}
+        <p>¿Tiene una cuenta registrada?</p>
+        <a href="{% url 'login' %}"><button>Sí, Iniciar Sesión</button></a>
+        <a href="{% url 'registro' %}"><button>No, Registrarme</button></a>
+    {% endif %}
+</body>
+</html>

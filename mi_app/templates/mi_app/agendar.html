@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agendar Cita de Vacunación</title>
+</head>
+<body>
+    <h2>Solicitud de Agenda de Vacuna</h2>
+    <p>RUT del Paciente: {{ user.username }}</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label for="campana">1. Seleccione la Campaña (y su Vacuna asociada):</label><br>
+        <select name="campana" id="campana" required>
+            <option value="">-- Seleccione una opción --</option>
+            {% for campana in campanas %}
+                <option value="{{ campana.id_campana }}">
+                    {{ campana.nombre }} — [Vacuna: {{ campana.tipo_vacuna.nombre }}]
+                </option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label for="punto">2. Seleccione el Centro de Vacunación:</label><br>
+        <select name="punto" id="punto" required>
+            <option value="">-- Seleccione un lugar --</option>
+            {% for punto in puntos %}
+                <option value="{{ punto.id_punto }}">{{ punto.nombre }} ({{ punto.direccion }})</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label for="fecha_hora">3. Seleccione Fecha y Hora deseada:</label><br>
+        <input type="datetime-local" name="fecha_hora" id="fecha_hora" required>
+        <br><br>
+
+        <button type="submit">Confirmar y Agendar Cita</button>
+    </form>
+
+    <br>
+    <a href="{% url 'inicio' %}"><button style="background-color: gray; color: white;">Volver al Inicio</button></a>
+</body>
+</html>

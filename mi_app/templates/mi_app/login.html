@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h2>Ingresa tus datos de login</h2>
+    {% if messages %}
+        {% for message in messages %}<p style="color: red;">{{ message }}</p>{% endfor %}
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        <label>RUT:</label><br><input type="text" name="rut" required><br><br>
+        <label>Contraseña:</label><br><input type="password" name="password" required><br><br>
+        <button type="submit">Ingresar</button>
+    </form>
+</body>
+</html>
