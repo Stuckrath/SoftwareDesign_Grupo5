@@ -8,7 +8,8 @@ Avances hechos para el trabajo semestral de Diseño de Software (501352), de par
 - Patrones de diseños aplicados (estructural): Patron_Adapter.png
 - Patrones de diseños aplicados (comportamiento): Patron State.drawio.png
 - Diseño de proceso en BPMN: BPMN_Diagram.png
-- Explicaciones de diagramas y descripción de seguridad básica: Entrega2Grupo5.pdf 
+- Explicaciones de diagramas y descripción de seguridad básica: Entrega2Grupo5.pdf
+- Video explicativo del diagrama BPMN: https://youtu.be/t94AFE6aNPA
 
 
 
