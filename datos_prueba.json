@@ -1,0 +1,48 @@
+[
+  {
+    "model": "mi_app.tipovacuna",
+    "pk": 1,
+    "fields": { "nombre": "Pfizer Bivalente", "desc_tipo": "Vacuna ARNm." }
+  },
+  {
+    "model": "mi_app.tipovacuna",
+    "pk": 2,
+    "fields": { "nombre": "Sinovac CoronaVac", "desc_tipo": "Virus inactivado." }
+  },
+  {
+    "model": "mi_app.puntovacunacion",
+    "pk": 1,
+    "fields": {
+      "nombre": "CESFAM Centro",
+      "tipo": "Salud Familiar",
+      "direccion": "Av. O'Higgins 450",
+      "comuna": "Concepción",
+      "region": "Biobío",
+      "campanas": [1]
+    }
+  },
+  {
+    "model": "mi_app.puntovacunacion",
+    "pk": 2,
+    "fields": {
+      "nombre": "Hospital Higueras",
+      "tipo": "Hospital",
+      "direccion": "Alto Horno 777",
+      "comuna": "Talcahuano",
+      "region": "Biobío",
+      "campanas": [1]
+    }
+  },
+  {
+    "model": "mi_app.campana",
+    "pk": 1,
+    "fields": {
+      "nombre": "Campaña de Invierno 2026",
+      "descripcion": "Vacunación anual.",
+      "fecha_inicio": "2026-05-01",
+      "fecha_termino": "2026-08-31",
+      "estado": "Activa",
+      "tipos_vacuna": [1, 2]
+    }
+  }
+]
