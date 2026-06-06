@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ reporte.titulo }}</title>
+</head>
+<body>
+    <h1>{{ reporte.titulo }}</h1>
+
+    <p>
+        <a href="?tipo=completo">Completo</a> |
+        <a href="?tipo=stock">Stock</a> |
+        <a href="?tipo=adherencia">Adherencia</a>
+    </p>
+
+    {% if reporte.adherencia %}
+    <h2>Adherencia</h2>
+    <p>Total citas: {{ reporte.adherencia.total_citas }}</p>
+    <p>Vacunados: {{ reporte.adherencia.vacunados }}</p>
+    <p>Porcentaje: {{ reporte.adherencia.porcentaje }}%</p>
+    {% endif %}
+
+    {% if reporte.grafico %}
+    <h2>Citas por estado</h2>
+    {% for etiqueta in reporte.grafico.etiquetas %}
+        <p>{{ etiqueta }}: {{ reporte.grafico.valores|join:", " }}</p>
+    {% endfor %}
+    {% endif %}
+
+    {% if reporte.puntos_vacunacion %}
+    <h2>Stock por centro</h2>
+    {% for p in reporte.puntos_vacunacion %}
+        <p>{{ p.punto }} ({{ p.comuna }}): {{ p.stock }} dosis</p>
+    {% endfor %}
+    {% endif %}
+
+    {% if reporte.tabla %}
+    <h2>Listado de citas</h2>
+    <table border="1">
+        <tr>{% for col in reporte.tabla.columnas %}<th>{{ col }}</th>{% endfor %}</tr>
+        {% for fila in reporte.tabla.filas %}
+        <tr>{% for celda in fila %}<td>{{ celda }}</td>{% endfor %}</tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <a href="{% url 'inicio' %}">← Volver</a>
+</body>
+</html>

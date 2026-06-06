@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import Campana, PuntoVacunacion, Cita, Persona, TipoVacuna
+from .reportes import ReporteCampanaBuilder, DirectorReportes
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
@@ -119,3 +120,21 @@ def agendar_cita(request):
         # BPMN: "Envia confirmación al sistema" -> "Manda confirmación al usuario"
         # Le pasamos la cita creada a una pantalla de éxito para cerrar el flujo de extremo a extremo
         return render(request, 'mi_app/cita_exitosa.html', {'cita': nueva_cita})
+    
+@login_required
+def ver_reporte(request, campana_id):
+    campana = Campana.objects.get(pk=campana_id)
+
+    tipo = request.GET.get('tipo', 'completo')  # ?tipo=stock | adherencia | completo
+
+    builder  = ReporteCampanaBuilder()
+    director = DirectorReportes(builder)
+
+    if tipo == 'stock':
+        reporte = director.reporte_stock(campana_id, campana.nombre)
+    elif tipo == 'adherencia':
+        reporte = director.reporte_adherencia(campana_id, campana.nombre)
+    else:
+        reporte = director.reporte_completo(campana_id, campana.nombre)
+
+    return render(request, 'mi_app/reporte.html', {'reporte': reporte})
