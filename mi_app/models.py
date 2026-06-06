@@ -21,7 +21,6 @@ class Campana(models.Model):
     def __str__(self):
         return self.nombre
 
-
 class PuntoVacunacion(models.Model):
     id_punto = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=150)
@@ -82,7 +81,7 @@ class Cita(models.Model):
     _MAPA_ESTADOS = {
         'Agendada': EstadoAgendada,
         'Cancelada': EstadoCancelada,
-        'Vacunado': EstadoVacuna, # O 'EstadoVacuna' según tu diagrama
+        'Vacunado': EstadoVacuna,
     }
 
     @property

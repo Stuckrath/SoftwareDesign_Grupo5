@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from django.contrib import messages
+from .notificadores import EmailAdapter, WhatsappAdapter, SMSAdapter
 
 # <<interface>> EstadoCita
 class EstadoCita(ABC):
@@ -22,8 +23,28 @@ class EstadoCita(ABC):
 
 class EstadoAgendada(EstadoCita):
     def agendar(self, cita):
-        raise ValueError("La cita ya se encuentra agendada.")
+        fecha_cita_date = cita.fecha_hora.date() 
+        fecha_inicio_campana = cita.campana.fecha_inicio
+        fecha_termino_campana = cita.campana.fecha_termino
+        if fecha_cita_date < fecha_inicio_campana or fecha_cita_date > fecha_termino_campana:
+            raise ValueError(
+                f"Error: La fecha seleccionada ({fecha_cita_date}) está fuera del rango "
+                f"de la campaña '{cita.campana.nombre}' "
+                f"({fecha_inicio_campana} al {fecha_termino_campana})."
+            )
+        cita.guardar_estado_str('Agendada')
 
+        try:
+            notificador_service = EmailAdapter()
+
+            destino = cita.persona.correo
+            mensaje= ({f"Hola {cita.persona.nombres}, tu cita para la campaña '{cita.campana.nombre}' "
+                f"ha sido confirmada para el {cita.fecha_hora.strftime('%d/%m/%Y a las %H:%M')} "
+                f"en el centro {cita.punto_vacunacion.nombre}."
+            })
+            notificador_service.enviarAlerta(destino, mensaje)     
+        except Exception as e:
+            print(f"No se pudo enviar la alerta de notificación: {e}")       
     def reprogramar(self, cita, nueva_fecha):
         cita.fecha_hora = nueva_fecha
         # Se mantiene en el mismo estado, solo cambia la fecha
