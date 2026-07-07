@@ -6,6 +6,8 @@ from .models import Campana, PuntoVacunacion, Cita, Persona, TipoVacuna
 from .reportes import ReporteCampanaBuilder, DirectorReportes
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from .notificadores import EmailAdapter
+from django.utils.dateparse import parse_datetime
 
 # BPMN: "Accede a plataforma de agenda" (Punto de decisión inicial)
 def mostrar_inicio(request):
@@ -107,15 +109,32 @@ def agendar_cita(request):
         # Buscamos la Persona asociada al usuario logueado en la BD
         persona_paciente = Persona.objects.get(rut=request.user.username)
 
-        # BPMN: "Almacena la reserva en la BD" -> "Guarda reserva del usuario en el sistema"
-        nueva_cita = Cita.objects.create(
-            fecha_hora=fecha_hora,
-            estado='Agendada', # Estado inicial del flujo
+        # Obtener las instancias completas
+        campana_instancia = Campana.objects.get(pk=campana_id)
+        punto_instancia = PuntoVacunacion.objects.get(pk=punto_id)
+        vacuna_instancia = TipoVacuna.objects.get(pk=vacuna_id)
+
+        # Convertir el texto del formulario a un objeto datetime de Python
+        fecha_hora_obj = parse_datetime(fecha_hora)
+
+        # Instanciar la cita usando la fecha ya convertida
+        nueva_cita = Cita(
+            fecha_hora=fecha_hora_obj,  # Se usa la variable convertida
             persona=persona_paciente,
-            punto_vacunacion_id=int(punto_id),
-            campana_id=int(campana_id),
-            tipo_vacuna_id=int(vacuna_id)
+            punto_vacunacion=punto_instancia,
+            campana=campana_instancia,
+            tipo_vacuna=vacuna_instancia
         )
+
+        try:
+            # Delegar la acción al Patrón State
+            nueva_cita.agendar() 
+            
+            return render(request, 'mi_app/cita_exitosa.html', {'cita': nueva_cita})
+            
+        except ValueError as e:
+            messages.error(request, str(e))
+            return redirect('agendar')
 
         # BPMN: "Envia confirmación al sistema" -> "Manda confirmación al usuario"
         # Le pasamos la cita creada a una pantalla de éxito para cerrar el flujo de extremo a extremo

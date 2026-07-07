@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from django.core.mail import send_mail
+from django.conf import settings
 
 # <<interface>> INotificador
 class INotificador(ABC):
@@ -8,7 +10,7 @@ class INotificador(ABC):
 
 # --- ADAPTADORES CONCRETOS (PROTOTIPOS) ---
 
-class EmailAdapter(INotificador):
+'''class EmailAdapter(INotificador):
     def __init__(self):
         self.client = "SendGridSDK (Simulado)"
 
@@ -19,7 +21,25 @@ class EmailAdapter(INotificador):
         print(f"Para: {dest}")
         print(f"Contenido: {mensaje}")
         print("="*50 + "\n")
-        return True
+        return True '''
+    
+class EmailAdapter(INotificador):
+    def enviarAlerta(self, destinatario, mensaje):
+        asunto = 'Confirmación de Cita - Sistema de Vacunación'
+        correo_origen = settings.EMAIL_HOST_USER
+        
+        try:
+            # función  que interactúa con el servidor SMTP
+            send_mail(
+                asunto,
+                mensaje,
+                correo_origen,
+                [destinatario],
+                fail_silently=False,
+            )
+            print(f"Éxito: Correo enviado a {destinatario}")
+        except Exception as e:
+            print(f"Error al enviar el correo a {destinatario}: {e}")
 
 
 class SMSAdapter(INotificador):
