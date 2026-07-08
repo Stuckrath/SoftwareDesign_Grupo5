@@ -10,6 +10,7 @@ from .models import Campana, PuntoVacunacion, Cita, Persona, TipoVacuna
 from .reportes import ReporteCampanaBuilder, DirectorReportes
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from .notificadores import EmailAdapter 
 
 # BPMN: "Accede a plataforma de agenda" (Punto de decisión inicial)
 def mostrar_inicio(request):
@@ -157,6 +158,41 @@ def agendar_cita(request):
             tipo_vacuna_id=int(vacuna_id)
         )
 
+        # SISTEMA DE NOTIFICACION CON EL PATRÓN ADAPTER
+        try:
+            # Instanciamos el adaptador concreto
+            notificador = EmailAdapter()
+            
+            # Obtenemos el correo electrónico del usuario en sesión
+            correo_paciente = request.user.email 
+            
+            # Construimos un cuerpo de mensaje claro y dinámico con los datos de la cita
+            cuerpo_mensaje = (
+                f"Hola {request.user.first_name},\n\n"
+                f"Confirmamos que tu cita de vacunación ha sido registrada de manera exitosa.\n\n"
+                f"Detalles de la Reserva:\n"
+                f"- Estado actual: AGENDADA (Fase inicial)\n"
+                f"- Beneficiario: {persona_paciente.nombres} {persona_paciente.apellidos}\n"
+                f"- Campaña: {nueva_cita.campana.nombre}\n"
+                f"- Vacuna: {nueva_cita.tipo_vacuna.nombre}\n"
+                f"- Centro de Salud: {nueva_cita.punto_vacunacion.nombre}\n"
+                f"- Fecha y Hora: {nueva_cita.fecha_hora.strftime('%d/%m/%Y a las %H:%M')} hrs.\n\n"
+                f"Por favor, asiste puntualmente. Recuerda que el personal médico "
+                f"deberá registrar la administración de la dosis en el sistema para completar tu flujo.\n\n"
+                f"Atentamente,\n"
+                f"Sistema de Gestión de Vacunación"
+            )
+            
+            # Invocamos el método del Adapter para despachar el correo SMTP real
+            notificador.enviarAlerta(correo_paciente, cuerpo_mensaje)
+            
+            # Dejamos un mensaje de éxito que Django mostrará en la interfaz
+            messages.success(request, "¡Cita agendada con éxito! Se ha despachado un correo real de confirmación.")
+
+        except Exception as e:
+            print(f"[ERROR NOTIFICACIÓN] No se pudo despachar el correo real: {e}")
+            messages.success(request, "¡Cita agendada con éxito!")
+            
         # BPMN: "Envia confirmación al sistema" -> "Manda confirmación al usuario"
         # Le pasamos la cita creada a una pantalla de éxito para cerrar el flujo de extremo a extremo
         return render(request, 'mi_app/cita_exitosa.html', {'cita': nueva_cita})
