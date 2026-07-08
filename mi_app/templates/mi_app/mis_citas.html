@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Citas de Vacunación</title>
+</head>
+<body>
+    <h1>Mis Citas de Vacunación</h1>
+    
+    {% if user.is_authenticated %}
+        <p>Hola, {{ user.username }} - Tus citas agendadas:</p>
+        <br>
+        
+        {% if citas %}
+            <table border="1" cellpadding="10" cellspacing="0">
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha y Hora</th>
+                    <th>Campaña</th>
+                    <th>Vacuna</th>
+                    <th>Centro</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+                {% for cita in citas %}
+                <tr>
+                    <td>{{ cita.id_cita }}</td>
+                    <td>{{ cita.fecha_hora|date:"d/m/Y H:i" }}</td>
+                    <td>{{ cita.campana.nombre }}</td>
+                    <td>
+                        {% if cita.tipo_vacuna %}
+                            {{ cita.tipo_vacuna.nombre }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ cita.punto_vacunacion.nombre }}</td>
+                    <td>
+                        {% if cita.estado == 'Agendada' %}
+                            <span style="color: blue;">Agendada</span>
+                        {% elif cita.estado == 'Cancelada' %}
+                            <span style="color: red;">Cancelada</span>
+                        {% elif cita.estado == 'Vacunado' %}
+                            <span style="color: green;">Vacunado</span>
+                        {% else %}
+                            {{ cita.estado }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if cita.estado == 'Agendada' %}
+                            <a href="{% url 'cancelar_cita' cita.id_cita %}">
+                                <button style="background-color: #ff4d4d; color: white; padding: 5px 10px;">Cancelar</button>
+                            </a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>No tienes citas agendadas.</p>
+        {% endif %}
+        
+        <br><br>
+        <a href="{% url 'agendar' %}">
+            <button style="background-color: #4CAF50; color: white; padding: 10px;">Agendar Nueva Cita</button>
+        </a>
+        
+        <a href="{% url 'inicio' %}">
+            <button style="background-color: #2196F3; color: white; padding: 10px;">Volver al Inicio</button>
+        </a>
+        
+        <a href="{% url 'logout' %}">
+            <button style="background-color: #ff4d4d; color: white; padding: 10px;">Cerrar Sesión</button>
+        </a>
+    {% else %}
+        <p>Debes iniciar sesión para ver tus citas.</p>
+        <a href="{% url 'login' %}"><button>Iniciar Sesión</button></a>
+    {% endif %}
+</body>
+</html>

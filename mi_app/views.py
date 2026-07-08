@@ -138,3 +138,56 @@ def ver_reporte(request, campana_id):
         reporte = director.reporte_completo(campana_id, campana.nombre)
 
     return render(request, 'mi_app/reporte.html', {'reporte': reporte})
+
+@login_required
+def mis_citas(request):
+    """
+    BPMN: "Usuario consulta sus citas"
+    Muestra todas las citas del usuario logueado organizadas por fecha.
+    """
+    persona = Persona.objects.get(rut=request.user.username)
+    citas = persona.citas.all().order_by('-fecha_hora')
+    
+    contexto = {
+        'citas': citas
+    }
+    return render(request, 'mi_app/mis_citas.html', contexto)
+
+
+@login_required
+def cancelar_cita(request, cita_id):
+    """
+    BPMN: "Usuario solicita cancelación de cita" -> "Sistema verifica y cancela"
+    Cancela una cita del usuario logueado.
+    Solo permite cancelar citas en estado 'Agendada'.
+    """
+    try:
+        cita = Cita.objects.get(id_cita=cita_id)
+        
+        # Verificar que la cita pertenece al usuario logueado
+        persona = Persona.objects.get(rut=request.user.username)
+        if cita.persona != persona:
+            messages.error(request, "No tienes permiso para cancelar esta cita.")
+            return redirect('mis_citas')
+        
+        # Validar que solo se puedan cancelar citas en estado 'Agendada'
+        if cita.estado != 'Agendada':
+            messages.error(request, f"No se puede cancelar una cita en estado '{cita.estado}'.")
+            return redirect('mis_citas')
+        
+        # BPMN: "Sistema procesa cancelación" -> Usa el patrón State
+        cita.cancelar()
+        
+        # BPMN: "Envía confirmación de cancelación"
+        messages.success(
+            request, 
+            f"Cita del {cita.fecha_hora.strftime('%d/%m/%Y a las %H:%M')} cancelada exitosamente."
+        )
+        return redirect('mis_citas')
+        
+    except Cita.DoesNotExist:
+        messages.error(request, "La cita no existe.")
+        return redirect('mis_citas')
+    except ValueError as e:
+        messages.error(request, str(e))
+        return redirect('mis_citas')

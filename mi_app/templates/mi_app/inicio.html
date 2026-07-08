@@ -9,9 +9,13 @@
     
     {% if user.is_authenticated %}
         <p>Hola, estás autenticado con el RUT: {{ user.username }}</p>
-
         <a href="{% url 'agendar' %}">
             <button style="background-color: #4CAF50; color: white; padding: 10px;">Agendar mi Cita de Vacunación</button>
+        </a>
+        <br><br>
+        
+        <a href="{% url 'mis_citas' %}">
+            <button style="background-color: #2196F3; color: white; padding: 10px;">Ver Mis Citas</button>
         </a>
         <br><br>
         
