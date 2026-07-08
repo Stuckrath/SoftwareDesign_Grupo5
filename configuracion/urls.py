@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from mi_app import views
 
 urlpatterns = [
@@ -23,7 +24,11 @@ urlpatterns = [
     path('', views.mostrar_inicio, name='inicio'),
     path('registro/', views.registrar_usuario, name='registro'),
     path('login/', views.iniciar_sesion, name='login'),
-    path('logout/', views.cerrar_sesion, name='logout'),
+    path('logout/', views.cerrar_sesion, name='cerrar_sesion'),
+    path('password_reset/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
     path('agendar/', views.agendar_cita, name='agendar'),
     path('mis-citas/', views.mis_citas, name='mis_citas'),
     path('cancelar-cita/<int:cita_id>/', views.cancelar_cita, name='cancelar_cita'),

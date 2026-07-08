@@ -1,23 +1,133 @@
 <!DOCTYPE html>
 <html lang="es">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <title>Cita Confirmada</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1f4d2e;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #f5f5f5;
+        }
+
+        .confirmacion-contenedor {
+            width: 92%;
+            max-width: 680px;
+            padding: 32px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 22px;
+            text-align: center;
+        }
+
+        .confirmacion-contenedor img {
+            max-width: 220px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto 24px;
+            display: block;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 2rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #b4e197;
+        }
+
+        .descripcion {
+            font-size: 1rem;
+            color: #d9f2d9;
+            margin-bottom: 24px;
+        }
+
+        .detalles {
+            text-align: left;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px;
+        }
+
+        .detalles li {
+            background-color: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .detalles strong {
+            color: #e8f7e8;
+        }
+
+        .acciones {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-principal,
+        .btn-secundario {
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-principal {
+            background-color: #4caf50;
+        }
+
+        .btn-principal:hover {
+            background-color: #43a047;
+            transform: translateY(-2px);
+        }
+
+        .btn-secundario {
+            background-color: #6c757d;
+        }
+
+        .btn-secundario:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-    <h2 style="color: green;">¡Cita Agendada Exitosamente!</h2>
-    <p>Tu reserva ha sido almacenada en el sistema de gestión de vacunas.</p>
-    
-    <ul>
-        <li><strong>Paciente (RUT):</strong> {{ cita.persona.rut }}</li>
-        <li><strong>Campaña:</strong> {{ cita.campana.nombre }}</li>
-        <li><strong>Tipo de Vacuna a recibir:</strong> {{ cita.campana.tipo_vacuna.nombre }}</li>
-        <li><strong>Lugar:</strong> {{ cita.punto_vacunacion.nombre }}</li>
-        <li><strong>Fecha y Hora:</strong> {{ cita.fecha_hora }}</li>
-        <li><strong>Estado actual:</strong> {{ cita.estado }}</li>
-    </ul>
+    <div class="confirmacion-contenedor">
+        <img src="{% static 'mi_app/HospitalPlaceholder.png' %}" alt="Hospital Placeholder">
+        <h2>¡Cita Agendada Exitosamente!</h2>
+        <p class="descripcion">Tu reserva se guardó correctamente en la plataforma de agenda.</p>
 
-    <hr>
-    <a href="{% url 'inicio' %}"><button>Ir al Inicio</button></a>
+        <ul class="detalles">
+            <li><strong>Paciente (RUT):</strong> {{ cita.persona.rut }}</li>
+            <li><strong>Campaña:</strong> {{ cita.campana.nombre }}</li>
+            <li><strong>Tipo de Vacuna a recibir:</strong> {{ cita.tipo_vacuna.nombre }}</li>
+            <li><strong>Lugar:</strong> {{ cita.punto_vacunacion.nombre }}</li>
+            <li><strong>Fecha y Hora:</strong> {{ cita.fecha_hora }}</li>
+            <li><strong>Estado actual:</strong> {{ cita.estado }}</li>
+        </ul>
+
+        <div class="acciones">
+            <a href="{% url 'inicio' %}" class="btn-secundario">Volver al Inicio</a>
+        </div>
+    </div>
 </body>
 </html>

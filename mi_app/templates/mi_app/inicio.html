@@ -1,31 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <title>Agenda de Vacunas - Inicio</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1f4d2e;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #f5f5f5;
+        }
+
+        .contenedor {
+            text-align: center;
+            width: 90%;
+            max-width: 700px;
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .botones {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 20px 24px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-verde {
+            background-color: #4CAF50;
+        }
+
+        .btn-verde:hover {
+            background-color: #43a047;
+        }
+
+        .btn-rojo {
+            background-color: #d9534f;
+        }
+
+        .btn-rojo:hover {
+            background-color: #c9302c;
+        }
+
+        .btn-azul {
+            background-color: #2f6fdb;
+        }
+
+        .btn-azul:hover {
+            background-color: #255fb4;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenido a la Plataforma de Agenda de Vacunas</h1>
-    
-    {% if user.is_authenticated %}
-        <p>Hola, estás autenticado con el RUT: {{ user.username }}</p>
-        <a href="{% url 'agendar' %}">
-            <button style="background-color: #4CAF50; color: white; padding: 10px;">Agendar mi Cita de Vacunación</button>
-        </a>
-        <br><br>
-        
-        <a href="{% url 'mis_citas' %}">
-            <button style="background-color: #2196F3; color: white; padding: 10px;">Ver Mis Citas</button>
-        </a>
-        <br><br>
-        
-        <a href="{% url 'logout' %}">
-            <button style="background-color: #ff4d4d; color: white;">Cerrar Sesión</button>
-        </a>
-    {% else %}
-        <p>¿Tiene una cuenta registrada?</p>
-        <a href="{% url 'login' %}"><button>Sí, Iniciar Sesión</button></a>
-        <a href="{% url 'registro' %}"><button>No, Registrarme</button></a>
-    {% endif %}
+    <div class="contenedor">
+        <img src="{% static 'mi_app/HospitalPlaceholder2.png' %}" alt="Hospital Placeholder" style="max-width: 440px; width: 100%; height: auto; margin-bottom: 25px; display: block; margin-left: auto; margin-right: auto;" />
+        <h1>Bienvenido a la Plataforma de Agenda de Vacunas</h1>
+
+        {% if user.is_authenticated %}
+            <p>Hola, estás autenticado con el RUT: {{ user.username }}</p>
+
+            <div class="botones">
+                <a href="{% url 'agendar' %}"><button class="btn-verde">Agendar mi Cita de Vacunación</button></a>
+                <a href="{% url 'mis_citas' %}"><button class="btn-azul">Ver Mis Citas</button></a>
+                <a href="{% url 'cerrar_sesion' %}"><button class = "btn-rojo">Cerrar Sesión</button></a>
+            </div>
+        {% else %}
+            <p>¿Tiene una cuenta registrada?</p>
+            <div class="botones">
+                <a href="{% url 'login' %}"><button class="btn-azul">Sí, Iniciar Sesión</button></a>
+                <a href="{% url 'registro' %}"><button class="btn-verde">No, Registrarme</button></a>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>
