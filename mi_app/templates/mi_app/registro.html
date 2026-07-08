@@ -1,24 +1,173 @@
 <!DOCTYPE html>
 <html lang="es">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <title>Registro de Usuario</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1f4d2e;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #f5f5f5;
+        }
+
+        .registro-contenedor {
+            width: 90%;
+            max-width: 520px;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .descripcion {
+            font-size: 1rem;
+            color: #d9f2d9;
+            margin-bottom: 25px;
+        }
+
+        .mensaje-error {
+            color: #ffb3b3;
+            margin-bottom: 18px;
+            font-weight: 500;
+        }
+
+        form {
+            display: grid;
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #f5f5f5;
+            font-size: 1rem;
+        }
+
+        input[type="date"] {
+            color: #f5f5f5;
+            accent-color: #ffffff;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1) brightness(2);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #80c080;
+            box-shadow: 0 0 0 3px rgba(128, 192, 128, 0.18);
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            background-color: #4CAF50;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #43a047;
+            transform: translateY(-2px);
+        }
+
+        .volver {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            background-color: #1f4d2edc;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #f5f5f5;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .volver:hover {
+            background-color: rgba(231, 49, 49, 0.25);
+            border-color: rgba(255, 211, 211, 0.6);
+        }
+    </style>
 </head>
 <body>
-    <h2>Formulario de Registro de Paciente</h2>
-    {% if messages %}
-        {% for message in messages %}<p style="color: red;">{{ message }}</p>{% endfor %}
-    {% endif %}
-    <form method="POST">
-        {% csrf_token %}
-        <label>RUT (Sin puntos ni guión):</label><br><input type="text" name="rut" required><br><br>
-        <label>Nombres:</label><br><input type="text" name="nombres" required><br><br>
-        <label>Apellidos:</label><br><input type="text" name="apellidos" required><br><br>
-        <label>Fecha de Nacimiento:</label><br><input type="date" name="fecha_nacimiento" required><br><br>
-        <label>Correo Electrónico:</label><br><input type="email" name="correo" required><br><br>
-        <label>Teléfono:</label><br><input type="text" name="telefono" required><br><br>
-        <label>Contraseña de ingreso:</label><br><input type="password" name="password" required><br><br>
-        <button type="submit">Registrar Cuenta</button>
-    </form>
+    <div class="registro-contenedor">
+        <a href="{% url 'inicio' %}" class="volver">Volver</a>
+        <img src="{% static 'mi_app/HospitalPlaceholder.png' %}" alt="Hospital Placeholder" style="width: 80%; height: auto; margin: 0 auto 20px; display: block;" />
+        <h2>Formulario de Registro de Paciente</h2>
+        <p class="descripcion">Completa tus datos para crear tu cuenta y acceder a la agenda de vacunación.</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p class="mensaje-error">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div>
+                <label>RUT (Sin puntos ni guión):</label>
+                <input type="text" name="rut" required>
+            </div>
+            <div>
+                <label>Nombres:</label>
+                <input type="text" name="nombres" required>
+            </div>
+            <div>
+                <label>Apellidos:</label>
+                <input type="text" name="apellidos" required>
+            </div>
+            <div>
+                <label>Fecha de Nacimiento:</label>
+                <input type="date" name="fecha_nacimiento" required>
+            </div>
+            <div>
+                <label>Correo Electrónico:</label>
+                <input type="email" name="correo" required>
+            </div>
+            <div>
+                <label>Teléfono:</label>
+                <input type="text" name="telefono" required>
+            </div>
+            <div>
+                <label>Contraseña de ingreso:</label>
+                <input type="password" name="password" required>
+            </div>
+            <div>
+                <label>Confirmar contraseña:</label>
+                <input type="password" name="password2" required>
+            </div>
+            <button type="submit">Registrar Cuenta</button>
+        </form>
+    </div>
 </body>
 </html>

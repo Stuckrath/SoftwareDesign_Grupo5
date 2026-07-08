@@ -1,7 +1,11 @@
+import re
+from datetime import datetime
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.utils import timezone
 from .models import Campana, PuntoVacunacion, Cita, Persona, TipoVacuna
 from .reportes import ReporteCampanaBuilder, DirectorReportes
 from django.contrib.auth import logout
@@ -24,9 +28,21 @@ def registrar_usuario(request):
         fecha_nacimiento = request.POST.get('fecha_nacimiento')
         telefono = request.POST.get('telefono')
 
+        if rut_user:
+            rut_user = rut_user.strip().upper()
+
         # Control de errores básico (Verifica validez conceptual)
+        if not rut_user or not re.match(r'^[0-9]{7,8}[0-9K]$', rut_user):
+            messages.error(request, "El RUT no sigue el formato correspondiente")
+            return render(request, 'mi_app/registro.html')
+
         if User.objects.filter(username=rut_user).exists():
             messages.error(request, "El RUT ya está registrado.")
+            return render(request, 'mi_app/registro.html')
+
+        password2 = request.POST.get('password2')
+        if password != password2:
+            messages.error(request, "Las contraseñas no coinciden. Por favor verifica e intenta de nuevo.")
             return render(request, 'mi_app/registro.html')
 
         # BPMN: "Recibe cuenta nueva y la almacena en BD" -> "Guarda cuenta en el sistema"
@@ -90,8 +106,8 @@ def agendar_cita(request):
         contexto = {
             'campanas': campanas_disponibles,
             'puntos': puntos_disponibles,
-            'vacunas': vacunas_disponibles
-
+            'vacunas': vacunas_disponibles,
+            'min_fecha_hora': timezone.localtime(timezone.now()).strftime('%Y-%m-%dT%H:%M')
         }
         return render(request, 'mi_app/agendar.html', contexto)
 
@@ -102,7 +118,31 @@ def agendar_cita(request):
         campana_id = request.POST.get('campana')
         vacuna_id = request.POST.get('vacuna')
         punto_id = request.POST.get('punto')
-        fecha_hora = request.POST.get('fecha_hora')
+        fecha_hora_str = request.POST.get('fecha_hora')
+
+        try:
+            fecha_hora_naive = datetime.fromisoformat(fecha_hora_str)
+            fecha_hora = timezone.make_aware(fecha_hora_naive, timezone.get_current_timezone())
+        except (TypeError, ValueError):
+            messages.error(request, "La fecha y hora seleccionada no es válida.")
+            contexto = {
+                'campanas': campanas_disponibles,
+                'puntos': puntos_disponibles,
+                'vacunas': vacunas_disponibles,
+                'min_fecha_hora': timezone.localtime(timezone.now()).strftime('%Y-%m-%dT%H:%M')
+            }
+            return render(request, 'mi_app/agendar.html', contexto)
+
+        fecha_actual = timezone.localtime(timezone.now()).replace(second=0, microsecond=0)
+        if fecha_hora < fecha_actual:
+            messages.error(request, "No se puede agendar una cita en una fecha anterior a la actual.")
+            contexto = {
+                'campanas': campanas_disponibles,
+                'puntos': puntos_disponibles,
+                'vacunas': vacunas_disponibles,
+                'min_fecha_hora': timezone.localtime(timezone.now()).strftime('%Y-%m-%dT%H:%M')
+            }
+            return render(request, 'mi_app/agendar.html', contexto)
 
         # Buscamos la Persona asociada al usuario logueado en la BD
         persona_paciente = Persona.objects.get(rut=request.user.username)

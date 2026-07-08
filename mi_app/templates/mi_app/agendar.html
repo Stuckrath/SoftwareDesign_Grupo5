@@ -1,57 +1,195 @@
 <!DOCTYPE html>
 <html lang="es">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <title>Agendar Cita de Vacunación</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1f4d2e;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #f5f5f5;
+        }
+
+        .agendar-contenedor {
+            width: 94%;
+            max-width: 720px;
+            padding: 32px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            text-align: center;
+        }
+
+        .agendar-contenedor img {
+            max-width: 220px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto 22px;
+            display: block;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .descripcion {
+            font-size: 1rem;
+            color: #d9f2d9;
+            margin-bottom: 24px;
+        }
+
+        .meta {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: #eaf7ea;
+        }
+
+        .mensaje-error {
+            color: #ffb3b3;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        form {
+            display: grid;
+            gap: 18px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        select,
+        input[type="datetime-local"] {
+            width: 95%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #000000;
+            font-size: 1rem;
+        }
+
+        select:focus,
+        input[type="datetime-local"]:focus {
+            outline: none;
+            border-color: #80c080;
+            box-shadow: 0 0 0 3px rgba(128, 192, 128, 0.18);
+        }
+
+        button.submit-btn {
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            background-color: #4caf50;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        button.submit-btn:hover {
+            background-color: #43a047;
+            transform: translateY(-2px);
+        }
+
+        .acciones {
+            display: flex;
+            justify-content: center;
+            margin-top: 22px;
+        }
+
+        .volver-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            color: white;
+            background-color: #6c757d;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .volver-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
 <body>
-    <h2>Solicitud de Agenda de Vacuna</h2>
-    <p>RUT del Paciente: {{ user.username }}</p>
+    <div class="agendar-contenedor">
+        <img src="{% static 'mi_app/HospitalPlaceholder.png' %}" alt="Hospital Placeholder">
+        <h2>Solicitud de Agenda de Vacuna</h2>
+        <p class="descripcion">Selecciona campaña, vacuna y lugar para agendar tu cita.</p>
+        <p class="meta">RUT del Paciente: {{ user.username }}</p>
 
-    {% if messages %}
-        {% for message in messages %}
-            <p style="color: red; font-weight: bold;">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-
-    <form method="POST">
-        {% csrf_token %}
-
-        <label for="campana">1. Seleccione la Campaña / Operativo:</label><br>
-        <select name="campana" id="campana" required>
-            <option value="">-- Seleccione una opción --</option>
-            {% for campana in campanas %}
-                <option value="{{ campana.id_campana }}">{{ campana.nombre }}</option>
+        {% if messages %}
+            {% for message in messages %}
+                <p class="mensaje-error">{{ message }}</p>
             {% endfor %}
-        </select>
-        <br><br>
+        {% endif %}
 
-        <label for="vacuna">2. Seleccione el Tipo de Vacuna deseada:</label><br>
-        <select name="vacuna" id="vacuna" required>
-            <option value="">-- Seleccione el compuesto biológico --</option>
-            {% for vacuna in vacunas %}
-                <option value="{{ vacuna.id_vacuna }}">{{ vacuna.nombre }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
+        <form method="POST">
+            {% csrf_token %}
 
-        <label for="punto">3. Seleccione el Centro de Vacunación:</label><br>
-        <select name="punto" id="punto" required>
-            <option value="">-- Seleccione un lugar --</option>
-            {% for punto in puntos %}
-                <option value="{{ punto.id_punto }}">{{ punto.nombre }} ({{ punto.direccion }})</option>
-            {% endfor %}
-        </select>
-        <br><br>
+            <div>
+                <label for="campana">1. Seleccione la Campaña / Operativo:</label>
+                <select name="campana" id="campana" required>
+                    <option value="">-- Seleccione una opción --</option>
+                    {% for campana in campanas %}
+                        <option value="{{ campana.id_campana }}">{{ campana.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <label for="fecha_hora">4. Seleccione Fecha y Hora deseada:</label><br>
-        <input type="datetime-local" name="fecha_hora" id="fecha_hora" required>
-        <br><br>
+            <div>
+                <label for="vacuna">2. Seleccione el Tipo de Vacuna deseada:</label>
+                <select name="vacuna" id="vacuna" required>
+                    <option value="">-- Seleccione el compuesto biológico --</option>
+                    {% for vacuna in vacunas %}
+                        <option value="{{ vacuna.id_vacuna }}">{{ vacuna.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <button type="submit">Confirmar y Agendar Cita</button>
-    </form>
+            <div>
+                <label for="punto">3. Seleccione el Centro de Vacunación:</label>
+                <select name="punto" id="punto" required>
+                    <option value="">-- Seleccione un lugar --</option>
+                    {% for punto in puntos %}
+                        <option value="{{ punto.id_punto }}">{{ punto.nombre }} ({{ punto.direccion }})</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-    <br>
-    <a href="{% url 'inicio' %}"><button style="background-color: gray; color: white;">Volver al Inicio</button></a>
+            <div>
+                <label for="fecha_hora">4. Seleccione Fecha y Hora deseada:</label>
+                <input type="datetime-local" name="fecha_hora" id="fecha_hora" required min="{{ min_fecha_hora }}">
+            </div>
+
+            <button type="submit" class="submit-btn">Confirmar y Agendar Cita</button>
+        </form>
+
+        <div class="acciones">
+            <a href="{% url 'inicio' %}" class="volver-btn">Volver al Inicio</a>
+        </div>
+    </div>
 </body>
 </html>
