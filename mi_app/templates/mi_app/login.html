@@ -110,6 +110,25 @@
         .reset-link:hover {
             text-decoration: underline;
         }
+
+        .volver {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            background-color: #1f4d2edc;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #f5f5f5;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .volver:hover {
+            background-color: rgba(231, 49, 49, 0.25);
+            border-color: rgba(255, 211, 211, 0.6);
+        }
     </style>
 </head>
 <body>
@@ -138,6 +157,7 @@
         </form>
 
         <div class="acciones">
+            <a class="volver" href="{% url 'inicio' %}">Volver</a>
             <a class="reset-link" href="{% url 'password_reset' %}" target="_blank" rel="noopener">¿Olvidaste tu contraseña?</a>
         </div>
     </div>

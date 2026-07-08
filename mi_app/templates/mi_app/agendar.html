@@ -113,23 +113,23 @@
             margin-top: 22px;
         }
 
-        .volver-btn {
-            border: none;
-            border-radius: 12px;
-            padding: 14px 24px;
-            font-size: 1rem;
-            color: white;
-            background-color: #6c757d;
+        .volver {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            background-color: #1f4d2edc;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #f5f5f5;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 1.2rem;
             text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s ease, transform 0.2s ease;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
         }
 
-        .volver-btn:hover {
-            background-color: #5a6268;
-            transform: translateY(-1px);
+        .volver:hover {
+            background-color: rgba(231, 49, 49, 0.25);
+            border-color: rgba(255, 211, 211, 0.6);
         }
     </style>
 </head>
@@ -188,7 +188,7 @@
         </form>
 
         <div class="acciones">
-            <a href="{% url 'inicio' %}" class="volver-btn">Volver al Inicio</a>
+            <a href="{% url 'inicio' %}"><button class="volver">Volver al Inicio</button></a>
         </div>
     </div>
 </body>
