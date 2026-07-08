@@ -30,5 +30,8 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
     path('agendar/', views.agendar_cita, name='agendar'),
+    path('mis-citas/', views.mis_citas, name='mis_citas'),
+    path('cancelar-cita/<int:cita_id>/', views.cancelar_cita, name='cancelar_cita'),
     path('reporte/<int:campana_id>/', views.ver_reporte, name='ver_reporte'),
 ]
+
