@@ -1,82 +1,268 @@
 <!DOCTYPE html>
 <html lang="es">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <title>Mis Citas de Vacunación</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1f4d2e;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #f5f5f5;
+        }
+
+        .mis-citas-contenedor {
+            width: 96%;
+            max-width: 980px;
+            padding: 32px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            text-align: center;
+        }
+
+        .mis-citas-contenedor img {
+            max-width: 330px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto 22px;
+            display: block;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .descripcion {
+            font-size: 1rem;
+            color: #d9f2d9;
+            margin-bottom: 24px;
+        }
+
+        .meta {
+            font-size: 1rem;
+            margin-bottom: 24px;
+            color: #eaf7ea;
+        }
+
+        .tabla-citas {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .tabla-citas th,
+        .tabla-citas td {
+            padding: 14px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .tabla-citas th {
+            background-color: rgba(76, 175, 80, 0.18);
+            color: #f5f5f5;
+            font-weight: 700;
+        }
+
+        .tabla-citas tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .estado-agendada {
+            color: #4db6ac;
+            font-weight: 700;
+        }
+
+        .estado-cancelada {
+            color: #ff8a80;
+            font-weight: 700;
+        }
+
+        .estado-vacunado {
+            color: #81c784;
+            font-weight: 700;
+        }
+
+        .acciones {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .btn-primario,
+        .btn-secundario,
+        .btn-peligro {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 22px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            color: white;
+        }
+
+        .btn-primario {
+            background-color: #4caf50;
+        }
+
+        .btn-primario:hover {
+            background-color: #43a047;
+            transform: translateY(-2px);
+        }
+
+        .btn-secundario {
+            background-color: #2f6fdb;
+        }
+
+        .btn-secundario:hover {
+            background-color: #255fb4;
+            transform: translateY(-2px);
+        }
+
+        .btn-peligro {
+            background-color: #d9534f;
+        }
+
+        .btn-peligro:hover {
+            background-color: #c9302c;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancelar {
+            background-color: #ff4d4d;
+            color: white;
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #e04343;
+        }
+
+        .mensaje-info {
+            color: #d9f2d9;
+            margin-bottom: 24px;
+            font-size: 1rem;
+        }
+
+        .mensaje-error {
+            color: #ffb3b3;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        .tabla-wrapper {
+            overflow-x: auto;
+        }
+
+        .volver {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            background-color: #1f4d2edc;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #f5f5f5;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .volver:hover {
+            background-color: rgba(231, 49, 49, 0.25);
+            border-color: rgba(255, 211, 211, 0.6);
+        }
+    </style>
 </head>
 <body>
-    <h1>Mis Citas de Vacunación</h1>
-    
-    {% if user.is_authenticated %}
-        <p>Hola, {{ user.username }} - Tus citas agendadas:</p>
-        <br>
-        
-        {% if citas %}
-            <table border="1" cellpadding="10" cellspacing="0">
-                <tr>
-                    <th>ID</th>
-                    <th>Fecha y Hora</th>
-                    <th>Campaña</th>
-                    <th>Vacuna</th>
-                    <th>Centro</th>
-                    <th>Estado</th>
-                    <th>Acción</th>
-                </tr>
-                {% for cita in citas %}
-                <tr>
-                    <td>{{ cita.id_cita }}</td>
-                    <td>{{ cita.fecha_hora|date:"d/m/Y H:i" }}</td>
-                    <td>{{ cita.campana.nombre }}</td>
-                    <td>
-                        {% if cita.tipo_vacuna %}
-                            {{ cita.tipo_vacuna.nombre }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>{{ cita.punto_vacunacion.nombre }}</td>
-                    <td>
-                        {% if cita.estado == 'Agendada' %}
-                            <span style="color: blue;">Agendada</span>
-                        {% elif cita.estado == 'Cancelada' %}
-                            <span style="color: red;">Cancelada</span>
-                        {% elif cita.estado == 'Vacunado' %}
-                            <span style="color: green;">Vacunado</span>
-                        {% else %}
-                            {{ cita.estado }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if cita.estado == 'Agendada' %}
-                            <a href="{% url 'cancelar_cita' cita.id_cita %}">
-                                <button style="background-color: #ff4d4d; color: white; padding: 5px 10px;">Cancelar</button>
-                            </a>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                </tr>
+    <div class="mis-citas-contenedor">
+        <img src="{% static 'mi_app/HospitalPlaceholder2.png' %}" alt="Hospital Placeholder">
+        <h2>Mis Citas de Vacunación</h2>
+        <p class="descripcion">Revisa el estado de tus citas y cancela las que ya no necesites.</p>
+
+        {% if user.is_authenticated %}
+            <p class="meta">RUT del paciente: {{ user.username }}</p>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="mensaje-error">{{ message }}</p>
                 {% endfor %}
-            </table>
+            {% endif %}
+
+            {% if citas %}
+                <div class="tabla-wrapper">
+                    <table class="tabla-citas">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha y Hora</th>
+                                <th>Campaña</th>
+                                <th>Vacuna</th>
+                                <th>Centro</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cita in citas %}
+                                <tr>
+                                    <td>{{ cita.id_cita }}</td>
+                                    <td>{{ cita.fecha_hora|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ cita.campana.nombre }}</td>
+                                    <td>{% if cita.tipo_vacuna %}{{ cita.tipo_vacuna.nombre }}{% else %}-{% endif %}</td>
+                                    <td>{{ cita.punto_vacunacion.nombre }}</td>
+                                    <td>
+                                        {% if cita.estado == 'Agendada' %}
+                                            <span class="estado-agendada">Agendada</span>
+                                        {% elif cita.estado == 'Cancelada' %}
+                                            <span class="estado-cancelada">Cancelada</span>
+                                        {% elif cita.estado == 'Vacunado' %}
+                                            <span class="estado-vacunado">Vacunado</span>
+                                        {% else %}
+                                            {{ cita.estado }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if cita.estado == 'Agendada' %}
+                                            <a class="btn-cancelar" href="{% url 'cancelar_cita' cita.id_cita %}">Cancelar</a>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="mensaje-info">No tienes citas agendadas en este momento.</p>
+            {% endif %}
+
+            <div class="acciones">
+                <a class="btn-primario" href="{% url 'agendar' %}">Agendar Nueva Cita</a>
+            </div>
+            <a href="{% url 'inicio' %}"><Button class="volver">Volver</Button></a>
         {% else %}
-            <p>No tienes citas agendadas.</p>
+            <p class="mensaje-info">Debes iniciar sesión para ver tus citas.</p>
+            <div class="acciones">
+                <a class="btn-primario" href="{% url 'login' %}">Iniciar Sesión</a>
+                <a class="btn-secundario" href="{% url 'inicio' %}">Volver al Inicio</a>
+            </div>
         {% endif %}
-        
-        <br><br>
-        <a href="{% url 'agendar' %}">
-            <button style="background-color: #4CAF50; color: white; padding: 10px;">Agendar Nueva Cita</button>
-        </a>
-        
-        <a href="{% url 'inicio' %}">
-            <button style="background-color: #2196F3; color: white; padding: 10px;">Volver al Inicio</button>
-        </a>
-        
-        <a href="{% url 'logout' %}">
-            <button style="background-color: #ff4d4d; color: white; padding: 10px;">Cerrar Sesión</button>
-        </a>
-    {% else %}
-        <p>Debes iniciar sesión para ver tus citas.</p>
-        <a href="{% url 'login' %}"><button>Iniciar Sesión</button></a>
-    {% endif %}
+    </div>
 </body>
 </html>

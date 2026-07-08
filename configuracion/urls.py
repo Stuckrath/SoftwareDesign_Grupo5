@@ -34,3 +34,4 @@ urlpatterns = [
     path('cancelar-cita/<int:cita_id>/', views.cancelar_cita, name='cancelar_cita'),
     path('reporte/<int:campana_id>/', views.ver_reporte, name='ver_reporte'),
 ]
+
