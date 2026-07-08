@@ -10,6 +10,7 @@ Avances hechos para el trabajo semestral de Diseño de Software (501352), de par
 - Diseño de proceso en BPMN: BPMN_Diagram.png
 - Explicaciones de diagramas y descripción de seguridad básica: Entrega2Grupo5.pdf
 - Video explicativo del diagrama BPMN: https://youtu.be/t94AFE6aNPA (parte 1) y https://youtu.be/RTGurts_Ets (parte 2)
+- Video explicativo del Interfaz de Usuario: https://youtu.be/co3fZvAW0s4
 
 
 
