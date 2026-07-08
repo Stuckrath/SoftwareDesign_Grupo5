@@ -88,7 +88,7 @@
         <h1>Bienvenido a la Plataforma de Agenda de Vacunas</h1>
 
         {% if user.is_authenticated %}
-            <p>Hola, estás autenticado con el RUT: {{ user.username }}</p>
+            <p>Hola, iniciaste sesión con el RUT: {{ user.username }}</p>
 
             <div class="botones">
                 <a href="{% url 'agendar' %}"><button class="btn-verde">Agendar mi Cita de Vacunación</button></a>
